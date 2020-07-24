@@ -45,8 +45,6 @@ class AutoMake
         if (empty($this->core['SOURCES'])) {
             die();
         }
-
-        var_dump($this->core);
     }
 
     /**
