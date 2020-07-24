@@ -184,7 +184,7 @@ class AutoMake
                 $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
                 $sourcePath = str_replace(
                     '#DIRECTORY_UPPER#', 
-                    strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)), 
+                    strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)) . '_PATH', 
                     MAKEFILE_OBJECTS_O
                 );
                 $sourcePath = str_replace('#INCLUDES#', $includeToObjects, $sourcePath);
@@ -203,7 +203,7 @@ class AutoMake
 
                 file_put_contents(
                     _MAKEFILE_, 
-                    '$(' . strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)) . ') ', 
+                    '$(OBJ_' . strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)) . '_CORE) ', 
                     FILE_APPEND
                 );
                 $this->writeObjectCores($currentDirectory[$directory], $fullPath);
