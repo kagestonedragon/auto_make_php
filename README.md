@@ -1,5 +1,7 @@
 # auto_make_php
 
+<img href="https://github.com/kagestonedragon/auto_make_php/blob/master/pics/terminal.png">
+
 ### auto_make на Си
 https://github.com/kagestonedragon/auto_make
 
