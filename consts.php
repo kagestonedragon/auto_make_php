@@ -44,7 +44,7 @@ define(
 );
 define(
     'MAKEFILE_FCLEAN',
-    'fclean:' . PHP_EOL .
+    'fclean: clean' . PHP_EOL .
     '#DEPENDENCIES#' .
     "\t\t" . '@(/bin/rm -f $(NAME))' . PHP_EOL .
     "\t\t" . '@(echo "^[[0;91m"$(NAME) "has been deleted!^[[0;0m")' . PHP_EOL
