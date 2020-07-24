@@ -27,10 +27,11 @@ define('MAKEFILE_SOURCES_PATH', '#DIRECTORY_UPPER#_PATH = #DIRECTORY_LOWER#/' . 
 define('MAKEFILE_SOURCES_FILES', '#DIRECTORY_UPPER#_FILES = #DIRECTORY_FILES#' . PHP_EOL);
 define('MAKEFILE_OBJ_CORE', 'OBJ_#DIRECTORY_UPPER#_CORE = $(addprefix $(OBJ_PATH), $(#DIRECTORY_UPPER#_FILES:.c=.o))' . PHP_EOL);
 define('MAKEFILE_OBJECTS', 'OBJECTS = ');
-define('MAKEFILE_ALL', 'all: $(NAME)#DEPENDENCIES#' . PHP_EOL);
+define('MAKEFILE_ALL', 'all: $(NAME)' . PHP_EOL);
 define(
     'MAKEFILE_ALL_NAME', 
-    '$(NAME): $(OBJECTS)' . PHP_EOL .
+    '$(NAME): $(OBJECTS)' .
+    '#DEPENDENCIES#' . 
     "\t\t" . '@($(GCC) $(GCC_FLAGS) -o $(NAME) $(OBJECTS) #LIBRARIES#)' . PHP_EOL .
     "\t\t" . '@(echo "^[[0;92m"$(NAME) "was created!^[[0;0m")' . PHP_EOL
 );
@@ -50,10 +51,7 @@ define(
 );
 define(
     'MAKEFILE_RE',
-    're:' . PHP_EOL .
-    '#DEPENDENCIES#' .
-    "\t\t" . 'fclean' . PHP_EOL .
-    "\t\t" . 'all' . PHP_EOL
+    're: fclean all' . PHP_EOL
 );
 define('MAKEFILE_OBJECTS_RULE', 'objects:' . PHP_EOL . "\t\t" . '@(mkdir $(OBJ_PATH))' . PHP_EOL);
 define(

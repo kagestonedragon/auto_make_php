@@ -122,7 +122,9 @@ class AutoMake
         file_put_contents(_MAKEFILE_, PHP_EOL, FILE_APPEND);
         file_put_contents(_MAKEFILE_, PHP_EOL, FILE_APPEND);
         $this->writeDependencies($this->core['DEPENDENCIES']);
-        $this->writeAllRule($this->core['LIBRARIES']);
+        file_put_contents(_MAKEFILE_, PHP_EOL, FILE_APPEND);
+        $this->writeAllRule($this->core['LIBRARIES'], $this->core['DEPENDENCIES']);
+        file_put_contents(_MAKEFILE_, PHP_EOL, FILE_APPEND);
         $this->writeCleanRule($this->core['DEPENDENCIES']);
         file_put_contents(_MAKEFILE_, PHP_EOL, FILE_APPEND);
         $this->writeFCleanRule($this->core['DEPENDENCIES']);
@@ -209,13 +211,32 @@ class AutoMake
         }
     }
 
-    private function writeAllRule($libraries)
+    private function writeAllRule($libraries, $dependencies)
     {
         $concat = '';
         if (!empty($libraries)) {
             $concat = '-L ' . implode(' -L ', $libraries);
         }
-        file_put_contents(_MAKEFILE_, str_replace('#LIBRARIES#', $concat, MAKEFILE_ALL_NAME), FILE_APPEND);
+        $allRule = str_replace('#LIBRARIES#', $concat, MAKEFILE_ALL_NAME);
+        //file_put_contents(_MAKEFILE_, str_replace('#LIBRARIES#', $concat, MAKEFILE_ALL_NAME), FILE_APPEND);
+
+        $depDirectories = [];
+        foreach ($dependencies as $directory => $files) {
+            if (!empty($files)) {
+                $depDirectories[] = 'make -C ' . $directory;
+            }
+        }
+
+        $concat = PHP_EOL;
+        if (!empty($depDirectories)) {
+            $concat = PHP_EOL . "\t\t" . implode(PHP_EOL . "\t\t", $depDirectories) . PHP_EOL;
+        }
+        $allInstructions = str_replace(
+            '#DEPENDENCIES#', 
+            $concat,
+            $allRule
+        );
+        file_put_contents(_MAKEFILE_, $allInstructions, FILE_APPEND);
     }
 
     private function writeSourcePaths($currentDirectory, $fullPath)
@@ -272,9 +293,12 @@ class AutoMake
         }
     }
 
+    /**
+     * DEPRECATED
+     */
     private function writeDependencies($dependencies)
     {
-        $depDirectories = [];
+        /*$depDirectories = [];
         foreach ($dependencies as $directory => $files) {
             if (!empty($files)) {
                 $depDirectories[] = 'make -C ' . $directory;
@@ -290,7 +314,8 @@ class AutoMake
             $concat,
             MAKEFILE_ALL
         );
-        file_put_contents(_MAKEFILE_, $allInstructions, FILE_APPEND);
+        */
+        file_put_contents(_MAKEFILE_, MAKEFILE_ALL, FILE_APPEND);
     }
 
     private function writeCleanRule($dependencies)
@@ -337,28 +362,7 @@ class AutoMake
 
     private function writeReRule($dependencies)
     {
-        $depDirectoriesFclean = [];
-        $depDirectoriesAll = [];
-        foreach ($dependencies as $directory => $files) {
-            if (!empty($files)) {
-                $depDirectoriesFclean[] = 'make fclean -C ' . $directory;
-                $depDirectoriesAll[] = 'make -C ' . $directory;
-            }
-        }
-
-        $concat = '';
-        if (!empty($depDirectoriesFclean)) {
-            $concat = "\t\t" . implode(PHP_EOL . "\t\t", $depDirectoriesFclean) . PHP_EOL;
-        }
-        if (!empty($depDirectoriesAll)) {
-            $concat .= "\t\t" . implode(PHP_EOL . "\t\t", $depDirectoriesAll) . PHP_EOL;
-        }
-        $allInstructions = str_replace(
-            '#DEPENDENCIES#', 
-            $concat,
-            MAKEFILE_RE
-        );
-        file_put_contents(_MAKEFILE_, $allInstructions, FILE_APPEND);
+        file_put_contents(_MAKEFILE_, MAKEFILE_RE, FILE_APPEND);
     }
 
     public function writeLog()
