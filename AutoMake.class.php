@@ -362,5 +362,81 @@ class AutoMake
         );
         file_put_contents(_MAKEFILE_, $allInstructions, FILE_APPEND);
     }
+
+    public function writeLog()
+    {
+        echo "\t\e[97m" . '>--------AUTO_MAKE--------<' . "\e[0m" . PHP_EOL;
+        echo "\e[96m" . 'FILE_TYPE: ' . "\e[91m" . 'EXECUTABLE' . "\e[91m" . PHP_EOL;
+        echo "\e[96m" . 'FILE_NAME: ' . "\e[91m" .$this->core['NAME'] . "\e[91m" . PHP_EOL;
+        echo "\e[96m" . 'GCC_FLAGS: ' . "\e[91m" .$this->core['GCC_FLAGS'] . "\e[91m" . PHP_EOL;
+        echo "\e[96m" . 'LIBRARIES: ' . "\e[91m" . implode(' ', $this->core['LIBRARIES']) . "\e[91m" . PHP_EOL . PHP_EOL;
+        echo "\e[96m" . 'SOURCES:' . "\e[0m" . PHP_EOL;
+        
+        $this->writeSourcesLog($this->core['SOURCES'], '', 1);
+        echo PHP_EOL;
+        $this->writeIncludesLog($this->core['HEADERS']);
+        echo PHP_EOL;
+        $this->writeDependenciesLog($this->core['DEPENDENCIES']);
+        echo "\t\e[97m" . '>--------AUTO_MAKE--------<' . "\e[0m" . PHP_EOL;
+    }
+    
+    private function writeSourcesLog($currentDirectory, $fullPath, $depth)
+    {
+        foreach ($currentDirectory as $directory => $files) {
+            $depthTemp = $depth;
+            $newLine = "";
+            while ($depthTemp--) {
+                $newLine .= "   ";
+            }
+            if ($directory == $this->currentDirectoryHashKey) {
+                $filesImploded = $newLine . implode(PHP_EOL . $newLine, $files) . PHP_EOL;
+                echo "\e[93m";
+                echo $filesImploded;
+                echo "\e[0m";
+            } else {
+                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                if ($depth > 1) {
+                    echo PHP_EOL;
+                }
+                echo $newLine;
+                echo "\e[92m" . $fullPath . "\e[0m" . PHP_EOL;
+                $this->writeSourcesLog($currentDirectory[$directory], $fullPath, $depth + 1);
+            }
+        }
+    }
+
+    private function writeIncludesLog($headers)
+    {
+        if (!empty($headers)) {
+            echo "\e[96m" . 'INCLUDES:' . "\e[0m" . PHP_EOL;
+            foreach ($headers as $directory => $files) {
+                echo '   ' . "\e[92m" . $directory . "\e[0m" . PHP_EOL;
+
+                if (isset($headers[$directory][$this->currentDirectoryHashKey])) {
+                    echo "\e[93m";
+                    $filesImploded = '      ' . implode(PHP_EOL . '      ', $headers[$directory][$this->currentDirectoryHashKey]) . PHP_EOL;
+                    echo $filesImploded;
+                    echo "\e[0m";
+                }
+            }
+        }
+    }
+
+    private function writeDependenciesLog($dependencies)
+    {
+        if (!empty($dependencies)) {
+            echo "\e[96m" . 'DEPENDENCIES:' . "\e[0m" . PHP_EOL;
+            foreach ($dependencies as $directory => $files) {
+                echo '   ' . "\e[92m" . $directory . "\e[0m" . PHP_EOL;
+
+                if (isset($dependencies[$directory][$this->currentDirectoryHashKey])) {
+                    echo "\e[93m";
+                    $filesImploded = '      ' . implode(PHP_EOL . '      ', $dependencies[$directory][$this->currentDirectoryHashKey]) . PHP_EOL;
+                    echo $filesImploded;
+                    echo "\e[0m";
+                }
+            }
+        }
+    }
     
 }
