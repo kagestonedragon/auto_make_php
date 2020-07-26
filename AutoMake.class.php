@@ -179,9 +179,11 @@ class AutoMake
 
     private function writeSourceToObject($currentDirectory, $fullPath, $includeToObjects)
     {
+        $prevFullPath = $fullPath;
+        
         foreach ($currentDirectory as $directory => $files) {
             if ($directory != $this->currentDirectoryHashKey) {
-                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                $fullPath = ltrim($prevFullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
                 $sourcePath = str_replace(
                     '#DIRECTORY_UPPER#', 
                     strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)) . '_PATH', 
@@ -197,9 +199,11 @@ class AutoMake
 
     private function writeObjectCores($currentDirectory, $fullPath)
     {
+        $prevFullPath = $fullPath;
+
         foreach ($currentDirectory as $directory => $files) {
             if ($directory != $this->currentDirectoryHashKey) {
-                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                $fullPath = ltrim($prevFullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
 
                 file_put_contents(
                     _MAKEFILE_, 
@@ -241,9 +245,10 @@ class AutoMake
 
     private function writeSourcePaths($currentDirectory, $fullPath)
     {
+        $prevFullPath = $fullPath;
         foreach ($currentDirectory as $directory => $files) {
             if ($directory != $this->currentDirectoryHashKey) {
-                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                $fullPath = ltrim($prevFullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
                 $sourcePath = str_replace(
                     '#DIRECTORY_UPPER#', 
                     strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)), 
@@ -259,6 +264,8 @@ class AutoMake
 
     private function writeSourceFiles($currentDirectory, $fullPath)
     {
+        $prevFullPath = $fullPath;
+
         foreach ($currentDirectory as $directory => $files) {
             if ($directory == $this->currentDirectoryHashKey) {
                 $filesStr = "\\" . PHP_EOL . "\t\t\t" . implode("\\" . PHP_EOL . "\t\t\t", $files);
@@ -270,7 +277,7 @@ class AutoMake
                 $sourceFiles = str_replace('#DIRECTORY_FILES#', $filesStr, $sourceFiles);
                 file_put_contents(_MAKEFILE_, $sourceFiles, FILE_APPEND);
             } else {
-                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                $fullPath = ltrim($prevFullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
                 $this->writeSourceFiles($currentDirectory[$directory], $fullPath);
             }
         }
@@ -278,9 +285,11 @@ class AutoMake
 
     private function writeSourceObjCore($currentDirectory, $fullPath)
     {
+        $prevFullPath = $fullPath;
+
         foreach ($currentDirectory as $directory => $files) {
             if ($directory != $this->currentDirectoryHashKey) {
-                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                $fullPath = ltrim($prevFullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
                 $sourcePath = str_replace(
                     '#DIRECTORY_UPPER#', 
                     strtoupper(str_replace(DIRECTORY_SEPARATOR, '_', $fullPath)), 
