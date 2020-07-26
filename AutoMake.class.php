@@ -393,6 +393,8 @@ class AutoMake
     
     private function writeSourcesLog($currentDirectory, $fullPath, $depth)
     {
+        $prevFullPath = $fullPath;
+
         foreach ($currentDirectory as $directory => $files) {
             $depthTemp = $depth;
             $newLine = "";
@@ -405,7 +407,7 @@ class AutoMake
                 echo $filesImploded;
                 echo "\e[0m";
             } else {
-                $fullPath = ltrim($fullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
+                $fullPath = ltrim($prevFullPath . DIRECTORY_SEPARATOR . $directory, DIRECTORY_SEPARATOR);
                 if ($depth > 1) {
                     echo PHP_EOL;
                 }
